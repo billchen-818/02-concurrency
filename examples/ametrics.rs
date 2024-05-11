@@ -1,5 +1,5 @@
 use anyhow::Result;
-use concurrency::Metrics;
+use concurrency::AmapMertrics;
 use rand::Rng;
 use std::{thread, time::Duration};
 
@@ -7,7 +7,17 @@ const N: usize = 2;
 const M: usize = 4;
 
 fn main() -> Result<()> {
-    let metrics = Metrics::new();
+    let metrics = AmapMertrics::new(&[
+        "call.thread.worker.0",
+        "call.thread.worker.1",
+        "call.thread.worker.2",
+        "call.thread.worker.3",
+        "req.page.1",
+        "req.page.2",
+        "req.page.3",
+        "req.page.4",
+        "req.page.5",
+    ]);
 
     println!("{}", metrics);
 
@@ -30,7 +40,7 @@ fn main() -> Result<()> {
     Ok(())
 }
 
-fn task_worker(idx: usize, metrics: Metrics) -> Result<()> {
+fn task_worker(idx: usize, metrics: AmapMertrics) -> Result<()> {
     thread::spawn(move || {
         loop {
             let mut rng = rand::thread_rng();
@@ -45,7 +55,7 @@ fn task_worker(idx: usize, metrics: Metrics) -> Result<()> {
     Ok(())
 }
 
-fn request_worker(metrics: Metrics) -> Result<()> {
+fn request_worker(metrics: AmapMertrics) -> Result<()> {
     thread::spawn(move || {
         loop {
             let mut rng = rand::thread_rng();
